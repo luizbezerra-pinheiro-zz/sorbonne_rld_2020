@@ -34,7 +34,7 @@ class RandomAgent(object):
 
 if __name__ == '__main__':
     #config = load_yaml('./configs/config_random_gridworld.yaml')
-    config = load_yaml('configs/config_random_cartpole.yaml')
+    config = load_yaml('./configs/config_random_cartpole.yaml')
     #config = load_yaml('./configs/config_random_lunar.yaml')
 
     freqTest = config["freqTest"]
@@ -115,3 +115,6 @@ if __name__ == '__main__':
                 break
 
     env.close()
+
+# pip install Box2D
+# pip install -y Box2D-kengz
