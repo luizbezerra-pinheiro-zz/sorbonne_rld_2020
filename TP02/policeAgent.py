@@ -16,12 +16,12 @@ class PoliceAgent(object):
         self.action_space = action_space
         self.policy = None
 
-    def policeIteration(self, states, mdp, eps=0.001, gamma=0.99):
+    def train(self, states, mdp, eps=0.001, gamma=0.99, max_iter=1000000):
         # statedic, mdp = env.getMDP()
         pi_0 = {s: self.action_space.sample() for s in states.keys()}  # random action for each state
         pi_k = {s: 0 for s in states.keys()}
-
-        while pi_0 != pi_k:
+        it = 0
+        while pi_0 != pi_k and it < max_iter:
             V_i = {s: random.random() for s in states.keys()}  # random initiation of Value Function s |-> V(s)
             V_i_new = {s: random.random() for s in states.keys()}
             while np.linalg.norm([V_i[state] - V_i_new[state] for state in V_i.keys()]) >= eps:
@@ -38,6 +38,7 @@ class PoliceAgent(object):
                     [sum([el[0] * (el[2] + gamma * V_i_new[el[1]]) for el in mdp[state][action]]) for action in
                      range(self.action_space.n)])
             pi_0 = copy.copy(pi_k_old)
+            it += 1
         self.policy = copy.copy(pi_k)
 
     def act(self, observation, reward, done):
@@ -63,7 +64,7 @@ if __name__ == '__main__':
 
     # Execution avec un Agent
     agent = PoliceAgent(env.action_space)
-    agent.policeIteration(statedic, mdp)  # Define policy
+    agent.train(statedic, mdp)  # Define policy
 
     episode_count = 1000
     reward = 0

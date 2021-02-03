@@ -16,20 +16,21 @@ class ValueAgent(object):
         self.action_space = action_space
         self.policy = None
 
-    def valueIteration(self, states, mdp, eps=0.001, gamma=0.99):
+    def train(self, states, mdp, eps=0.001, gamma=0.99, max_iter=1000000):
         # statedic, mdp = env.getMDP()
         pi = {s: 0 for s in states.keys()}  # random action for each state
 
         V_i = {s: random.random() for s in states.keys()}  # random initiation of Value Function s |-> V(s)
         V_i_new = {s: random.random() for s in states.keys()}
-        while np.linalg.norm([V_i[state] - V_i_new[state] for state in V_i.keys()]) >= eps:
+        it = 0
+        while np.linalg.norm([V_i[state] - V_i_new[state] for state in V_i.keys()]) >= eps and it < max_iter:
             V_i_old = copy.copy(V_i_new)
             for state, transitions in mdp.items():
                 V_i_new[state] = np.max(
                 [sum([el[0] * (el[2] + gamma * V_i_new[el[1]]) for el in mdp[state][action]]) for action in
                  range(self.action_space.n)])
             V_i = copy.copy(V_i_old)
-
+            it += 1
         # Update policy
         for state in mdp.keys():
             pi[state] = np.argmax(
@@ -59,7 +60,7 @@ if __name__ == '__main__':
 
     # Execution avec un Agent
     agent = ValueAgent(env.action_space)
-    agent.valueIteration(statedic, mdp)  # Define policy
+    agent.train(statedic, mdp)  # Define policy
 
     episode_count = 10000
     reward = 0

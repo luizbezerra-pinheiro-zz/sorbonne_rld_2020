@@ -72,10 +72,10 @@ def UCB_agent(rewards, n_bras=10):
     return last_actions
 
 
-def lin_UCB_agent(states, rewards, n_bras=10):
+def lin_UCB_agent(states, rewards, n_bras=10, alpha=1.6):
     N = len(rewards)
     d = np.shape(states)[1]
-    alpha = 21
+    # alpha = 1.6  # 1.59 -> delta = 1, 2 -> delta = 0.27
 
     # Initialize our matrices (regression matrices)
     best_actions = []
@@ -99,38 +99,28 @@ def lin_UCB_agent(states, rewards, n_bras=10):
 
 
 def regret_vs_t(states, rewards):
+    # Agent actionss
     random_agent_actions = random_baseline_agent(rewards)    # random_baseline
     best_agent_actions = static_best_baseline_agent(rewards)
     greedy_agent_actions = greedy_baseline_agent(rewards)
     ucb_actions = UCB_agent(rewards)
-    lin_ucb_actions = lin_UCB_agent(states, rewards)
+    lin_ucb_actions_236 = lin_UCB_agent(states, rewards, alpha=2.36)
+    lin_ucb_actions_19 = lin_UCB_agent(states, rewards, alpha=1.9)
+    agents = [random_agent_actions, best_agent_actions, greedy_agent_actions, ucb_actions, lin_ucb_actions_236, lin_ucb_actions_19]
+    agents_names = ['Random Agent', 'Best Agent', 'Optimal Agent', 'UCB Agent', 'lin-UCB Agent alpha=2.36', 'lin-UCB Agent alpha=1.9']
+    best_agent_index = agents_names.index('Best Agent')
 
     # Rewards
-    random_rewards = [rewards_t[action] for action, rewards_t in zip(random_agent_actions, rewards)]
-    best_agent_rewards = [rewards_t[action] for action, rewards_t in zip(best_agent_actions, rewards)]
-    greedy_agent_rewards = [rewards_t[action] for action, rewards_t in zip(greedy_agent_actions, rewards)]
-    ucb_agent_rewards = [rewards_t[action] for action, rewards_t in zip(ucb_actions, rewards)]
-    lin_ucb_agent_rewards = [rewards_t[action] for action, rewards_t in zip(lin_ucb_actions, rewards)]
+    agents_rewards = [[rewards_t[action] for action, rewards_t in zip(agent_actions, rewards)] for agent_actions in agents]
 
     # Accumulated Reward
-    random_rewards_cum = np.cumsum(random_rewards)
-    best_agent_rewards_cum = np.cumsum(best_agent_rewards)
-    greedy_agent_rewards_cum = np.cumsum(greedy_agent_rewards)
-    ucb_agent_rewards_cum = np.cumsum(ucb_agent_rewards)
-    lin_ucb_agent_rewards_cum = np.cumsum(lin_ucb_agent_rewards)
+    agents_rewards_cum = [np.cumsum(rewards) for rewards in agents_rewards]
 
     # Regret
-    random_agent_regrets = np.subtract(best_agent_rewards_cum, random_rewards_cum)
-    best_agent_regrets = np.subtract(best_agent_rewards_cum, best_agent_rewards_cum)
-    greedy_agent_regrets = np.subtract(best_agent_rewards_cum, greedy_agent_rewards_cum)
-    ucb_agent_regrets = np.subtract(best_agent_rewards_cum, ucb_agent_rewards_cum)
-    lin_ucb_agent_regrets = np.subtract(best_agent_rewards_cum, lin_ucb_agent_rewards_cum)
+    agent_rewards_regrets = [np.subtract(agents_rewards_cum[best_agent_index], rewards_cum) for rewards_cum in agents_rewards_cum]
 
-    plt.plot(random_agent_regrets, label='Random Agent')
-    plt.plot(best_agent_regrets, label='Best Agent')
-    plt.plot(greedy_agent_regrets, label='Optimal Agent')
-    plt.plot(ucb_agent_regrets, label='UCB Agent')
-    plt.plot(lin_ucb_agent_regrets, label='lin-UCB Agent')
+    # plot
+    [plt.plot(regrets, label=name) for regrets, name in zip(agent_rewards_regrets, agents_names)]
 
     plt.legend()
     plt.xlabel('Time step')

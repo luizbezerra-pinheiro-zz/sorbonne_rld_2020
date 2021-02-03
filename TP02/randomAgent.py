@@ -1,11 +1,8 @@
 import matplotlib
-
-matplotlib.use("TkAgg")
 import gym
 import gridworld
-from gym import wrappers, logger
-import numpy as np
-import copy
+
+matplotlib.use("TkAgg")
 
 
 class RandomAgent(object):
@@ -13,6 +10,9 @@ class RandomAgent(object):
 
     def __init__(self, action_space):
         self.action_space = action_space
+
+    def train(self, *args, **kwargs):
+        pass
 
     def act(self, observation, reward, done):
         return self.action_space.sample()
