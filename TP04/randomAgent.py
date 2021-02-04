@@ -10,7 +10,6 @@ from utils import *
 from torch.utils.tensorboard import SummaryWriter
 
 
-
 class RandomAgent(object):
     """The world's simplest agent!"""
 
@@ -33,9 +32,9 @@ class RandomAgent(object):
 
 
 if __name__ == '__main__':
-    #config = load_yaml('./configs/config_random_gridworld.yaml')
-    config = load_yaml('./configs/config_random_cartpole.yaml')
-    #config = load_yaml('./configs/config_random_lunar.yaml')
+    config = load_yaml('./configs/config_random_gridworld.yaml')
+    # config = load_yaml('./configs/config_random_cartpole.yaml')
+    # config = load_yaml('./configs/config_random_lunar.yaml')
 
     freqTest = config["freqTest"]
     freqSave = config["freqSave"]
@@ -57,7 +56,9 @@ if __name__ == '__main__':
     episode_count = config["nbEpisodes"]
     ob = env.reset()
 
-    agent = RandomAgent(env,config)
+    agent = RandomAgent(env, config)
+
+    print(agent.featureExtractor.getFeatures(env.reset))
 
     print("Saving in " + outdir)
     os.makedirs(outdir, exist_ok=True)
@@ -115,6 +116,3 @@ if __name__ == '__main__':
                 break
 
     env.close()
-
-# pip install Box2D
-# pip install -y Box2D-kengz

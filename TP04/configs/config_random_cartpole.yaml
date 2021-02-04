@@ -4,6 +4,6 @@ featExtractor: !!python/name:__main__.NothingToDo ''
 freqSave: 1000
 freqTest: 10
 nbTest: 1
-freqVerbose: 10
+freqVerbose: 100
 fromFile: null
 nbEpisodes: 1000000

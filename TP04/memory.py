@@ -77,6 +77,7 @@ class Memory:
             if not p:
                 p = self.p_upper
             self.tree.store(p, transition)
+            self.nentities = self.tree.nentities
         else:
             self.mem[self.mem_ptr] = transition
             self.mem_ptr += 1
