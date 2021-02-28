@@ -1,0 +1,11 @@
+env: LunarLander-v2
+seed: 5
+featExtractor: !!python/name:__main__.NothingToDo ''
+freqSave: 1000
+freqTest: 10
+nbTest: 1
+freqVerbose: 10
+fromFile: null
+batchSize: 1000
+nbEpisodes: 10000000
+nbTimesteps: 10000000
